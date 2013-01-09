@@ -16,6 +16,7 @@ var counters = {
   "statsd.bad_lines_seen": 0
 };
 var timers = {};
+var sigmas = {};
 var gauges = {};
 var sets = {};
 var counter_rates = {};
@@ -52,6 +53,7 @@ function flushMetrics() {
     gauges: gauges,
     timers: timers,
     sets: sets,
+		sigmas: sigmas, 
     counter_rates: counter_rates,
     timer_data: timer_data,
     pctThreshold: pctThreshold
@@ -112,6 +114,7 @@ config.configFile(process.argv[2], function (config, oldConfig) {
     debugInt = setInterval(function () {
       l.log("Counters:\n" + util.inspect(counters) +
                "\nTimers:\n" + util.inspect(timers) +
+							 "\nSigmas:\n" + util.inspect(sigmas) +
                "\nGauges:\n" + util.inspect(gauges), 'debug');
     }, config.debugInterval || 10000);
   }
@@ -161,10 +164,15 @@ config.configFile(process.argv[2], function (config, oldConfig) {
               timers[key] = [];
             }
             timers[key].push(Number(fields[0] || 0));
-          } else if (fields[1].trim() == "g") {
+          } else if (fields[1].trim() == "sig") {
+						if(! sigmas[key]) {
+							sigmas[key] = 0;
+						}
+						sigmas[key] += Number(fields[0] || 0);
+					} else if (fields[1].trim() == "g") {
             gauges[key] = Number(fields[0] || 0);
           } else if (fields[1].trim() == "s") {
-            if (! sets[key]) {
+ 		         if (! sets[key]) {
               sets[key] = new set.Set();
             }
             sets[key].insert(fields[0] || '0');
@@ -251,6 +259,11 @@ config.configFile(process.argv[2], function (config, oldConfig) {
           case "counters":
             stream.write(util.inspect(counters) + "\n");
             stream.write("END\n\n");
+						break;
+						
+					case "sigmas":
+						stream.write(util.inspect(sigmas) + "\n");
+						stream.write("END\n\n");
             break;
 
           case "timers":
@@ -270,6 +283,14 @@ config.configFile(process.argv[2], function (config, oldConfig) {
             }
             stream.write("END\n\n");
             break;
+
+					case "delsigmas":
+						for (index in cmdline) {
+							delete sigmas[cmdline[index]];
+							stream.write("deleted: " + cmdline[index] + "\n");
+						}
+						stream.write("END\n\n");
+						break;
 
           case "deltimers":
             for (index in cmdline) {
