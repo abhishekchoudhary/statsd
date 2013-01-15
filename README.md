@@ -1,4 +1,4 @@
-StatsD [![Build Status](https://secure.travis-ci.org/etsy/statsd.png)](http://travis-ci.org/etsy/statsd)
+StatsD [![Build Status](https://secure.travis-ci.org/abhishekchoudhary/statsd.png)](http://travis-ci.org/abhishekchoudhary/statsd)
 ======
 
 A network daemon that runs on the [Node.js][node] platform and
@@ -6,7 +6,7 @@ listens for statistics, like counters and timers, sent over [UDP][udp]
 and sends aggregates to one or more pluggable backend services (e.g.,
 [Graphite][graphite]).
 
-We ([Etsy][etsy]) [blogged][blog post] about how it works and why we created it.
+[Etsy][etsy] [blogged][blog post] about how it works and why they created it.
 
 
 Concepts
@@ -74,6 +74,13 @@ using a Set to store all occuring events.
 
     uniques:765|s
 
+Sigmas
+----
+Support has been added to StatsD to recognize actual counter events,
+i.e., storing the value until it is appended to later.
+
+    somsigma:42|sig
+
 Multi-Metric Packets
 --------------------
 StatsD supports receiving multiple metrics in a single packet by separating them
@@ -123,10 +130,6 @@ StatsD includes the following built-in backends:
   metrics to stdout (see what's going on during development).
 * Repeater (`repeater`): Utilizes the `packet` emit API to
   forward raw packets retrieved by StatsD to multiple backend StatsD instances.
-
-A robust set of [other backends](https://github.com/etsy/statsd/wiki/Backends)
-are also available as plugins to allow easy reporting into databases, queues
-and third-party services.
 
 By default, the `graphite` backend will be loaded automatically. Multiple
 backends can be run at once. To select which backends are loaded, set
@@ -379,35 +382,3 @@ Meta
 ---------
 - IRC channel: `#statsd` on freenode
 - Mailing list: `statsd@librelist.com`
-
-
-Contribute
----------------------
-
-You're interested in contributing to StatsD? *AWESOME*. Here are the basic steps:
-
-fork StatsD from here: http://github.com/etsy/statsd
-
-1. Clone your fork
-2. Hack away
-3. If you are adding new functionality, document it in the README
-4. If necessary, rebase your commits into logical chunks, without errors
-5. Push the branch up to GitHub
-6. Send a pull request to the etsy/statsd project.
-
-We'll do our best to get your changes in!
-
-
-[graphite]: http://graphite.wikidot.com
-[etsy]: http://www.etsy.com
-[blog post]: http://codeascraft.etsy.com/2011/02/15/measure-anything-measure-everything/
-[node]: http://nodejs.org
-[nodemods]: http://nodejs.org/api/modules.html
-[udp]: http://en.wikipedia.org/wiki/User_Datagram_Protocol
-
-
-Contributors
------------------
-
-In lieu of a list of contributors, check out the commit history for the project:
-https://github.com/etsy/statsd/graphs/contributors
