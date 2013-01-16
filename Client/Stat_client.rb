@@ -42,9 +42,9 @@ class Statsd
     Statsd.update_stats(stats, value, sample_rate, 'g')
   end
 
-	def self.sigmas(stats, value, sample_rate=1)
-		Statsd.update_stats(stats, value, sample_rate, 'sig')
-	end
+  def self.sigmas(stats, value, sample_rate=1)
+    Statsd.update_stats(stats, value, sample_rate, 'sig')
+  end
 
   def self.sets(stats, value, sample_rate=1)
     Statsd.update_stats(stats, value, sample_rate, 's')
