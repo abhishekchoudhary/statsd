@@ -18,7 +18,7 @@ var counters = {
 };
 var timers = {};
 var sigmas = {};
-db.open('./background/database', {create_if_missing: true}, function(err,db){db.get('sigma_store', function(err,val){sigmas = JSON.parse(val) || {} })});
+db.open('./background/database', {create_if_missing: true}, function(err,db){db.get('sigma_store', function(err,val){sigmas = JSON.parse(val)})});
 var gauges = {};
 var sets = {};
 var counter_rates = {};
