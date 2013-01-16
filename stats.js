@@ -7,6 +7,7 @@ var dgram  = require('dgram')
   , logger = require('./lib/logger')
   , set = require('./lib/set')
   , pm = require('./lib/process_metrics')
+	, db = require('leveldb')
 
 
 // initialize data structures with defaults for statsd stats
@@ -17,6 +18,7 @@ var counters = {
 };
 var timers = {};
 var sigmas = {};
+db.open('./background/database', {create_if_missing: true}, function(err,db){db.get('sigma_store', function(err,val){sigmas = JSON.parse(val)})});
 var gauges = {};
 var sets = {};
 var counter_rates = {};
@@ -169,6 +171,7 @@ config.configFile(process.argv[2], function (config, oldConfig) {
 							sigmas[key] = 0;
 						}
 						sigmas[key] += Number(fields[0] || 0);
+						db.open('./background/database',{create_if_missing: true},function(err,db){db.put('sigma_store',JSON.stringify(sigmas))});
 					} else if (fields[1].trim() == "g") {
             gauges[key] = Number(fields[0] || 0);
           } else if (fields[1].trim() == "s") {
